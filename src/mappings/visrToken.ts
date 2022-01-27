@@ -4,7 +4,7 @@ import { Transfer as TransferEvent } from "../../generated/VisrToken/ERC20"
 import { updateVisrTokenDayData } from '../utils/intervalUpdates'
 import { ADDRESS_ZERO, ZERO_BI, ZERO_BD, REWARD_HYPERVISOR_ADDRESS } from '../utils/constants'
 import { getVisrRateInUSDC } from '../utils/pricing'
-import { getOrCreateRewardHypervisor } from '../utils/rewardHypervisor'
+import { getOrCreateRewardHyperLiquidrium } from '../utils/rewardHyperLiquidrium'
 import { getOrCreateVisrToken, unstakeVisrFromVisor } from '../utils/visrToken'
 import { getActiveVisor } from '../utils/visor'
 
@@ -35,20 +35,20 @@ export function handleTransfer(event: TransferEvent): void {
 	let visorTo = getActiveVisor(event.params.to.toHexString())
 	let visorFrom = getActiveVisor(event.params.from.toHexString())
 
-	let vVisr = getOrCreateRewardHypervisor()
+	let vVisr = getOrCreateRewardHyperLiquidrium()
 	
 	if (event.params.to == REWARD_HYPERVISOR) {
 		vVisr.totalVisr += visrAmount
 		visr.totalStaked += visrAmount
 		if (DISTRIBUTORS.includes(event.params.from)) {
-			// VISR distribution event into rewards hypervisor
+			// VISR distribution event into rewards hyperLiquidrium
 			visrRate = getVisrRateInUSDC()
 			distributed += visrAmount
 			// Tracks all time distributed
 			visr.totalDistributed += distributed
 			visr.totalDistributedUSD += distributed.toBigDecimal() * visrRate
 		} else {
-			// User deposit into reward hypervisor
+			// User deposit into reward hyperLiquidrium
 			if (visorFrom != null) {
 				// Skip if address is not a visor vault
 				visorFrom.visrDeposited += visrAmount
@@ -56,7 +56,7 @@ export function handleTransfer(event: TransferEvent): void {
 			}
 		}
 	} else if (event.params.from == REWARD_HYPERVISOR) {
-		// User withdraw from reward hypervisor
+		// User withdraw from reward hyperLiquidrium
 		// update visor entity
 		if (!DISTRIBUTORS.includes(event.params.to) && visorTo != null) {
 			// Skip if address is not a visor vault

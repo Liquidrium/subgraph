@@ -21,7 +21,7 @@ export function getOrCreateVisor(addressString: string): Visor {
 		visor.visrEarnedRealized = ZERO_BI
 		visor.ethEarned = ZERO_BI
 		visor.owner = ADDRESS_ZERO
-		visor.hypervisorCount = ZERO_BI
+		visor.hyperLiquidriumCount = ZERO_BI
 	}
 	return visor as Visor
 }

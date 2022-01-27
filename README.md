@@ -1,18 +1,16 @@
-# Visor Finance Subgraph
+# Liquidrium Subgraph
 
-This subgraph aims to provides data for all products of Visor Finance.  This includes: 
-1. Phase 1 Liquidity Mining Program
-1. Uniswap V3 Gamma Strategies Hypervisors
+This subgraph aims to provides data for HiyperLiquidrium.
 
-## Gamma Strategies Hypervisors
-These hypervisors are used to actively manage LP positions on Uniswap V3.  Entities that relate these hypervisors are named beginning with UniswapV3. E.g. UniswapV3Hypervisor.
+## HyperLiquidrium
+These HyperLiquidrium are used to actively manage LP positions on Uniswap V3.  Entities that relate these HyperLiquidrium are named beginning with UniswapV3. E.g. UniswapV3HyperLiquidrium.
 
 ## Hosted Service
-The subgraph is currently hosted on The Graph Hosted Service and can be accessed at: https://thegraph.com/explorer/subgraph/visorfinance/visor
+The subgraph is currently hosted on The Graph Hosted Service and can be accessed at: https://thegraph.com/hosted-service/subgraph/liquidrium/hyperliqidrium-ethereum
 
 ## Build and Deploy
-To deploy full subgraph to the hosted service at visorfinance/visor:
-1. Generate the full subgraph.yaml file with ```yarn prepare:full-mainnet```.
+To deploy full subgraph to the hosted service at liquidrium/hyperliqidrium-ethereum:
+1. Generate the full subgraph.yaml file with ```yarn prepare:v3only-mainnet```.
 2. Run ```yarn codegen```  to prepare the TypeScript sources for the GraphQL and ABIs.
 3. Deploy via ```yarn deploy --access-token <ACCESS_TOKEN>```
 

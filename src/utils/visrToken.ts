@@ -4,9 +4,9 @@ import { getVisrRateInUSDC } from "./pricing";
 import { Transfer as TransferEvent } from "../../generated/VisrToken/ERC20";
 import { Visor, VisrDistribution, VisrToken, RewardLog } from "../../generated/schema";
 import {
-  getOrCreateRewardHypervisor,
-  getOrCreateRewardHypervisorShare,
-} from "./rewardHypervisor";
+  getOrCreateRewardHyperLiquidrium,
+  getOrCreateRewardHyperLiquidriumShare,
+} from "./rewardHyperLiquidrium";
 import { ZERO_BI, ZERO_BD, constantAddresses } from "./constants";
 
 export function getOrCreateVisrToken(): VisrToken {
@@ -46,8 +46,8 @@ export function unstakeVisrFromVisor(
   tx: string
 ): void {
   
-  let rHypervisor = getOrCreateRewardHypervisor();
-  let rHypervisorShares = getOrCreateRewardHypervisorShare(visorAddress);
+  let rHyperLiquidrium = getOrCreateRewardHyperLiquidrium();
+  let rHyperLiquidriumShares = getOrCreateRewardHyperLiquidriumShare(visorAddress);
 
   let rlog = new RewardLog(tx)
   rlog.address = visorAddress
@@ -60,8 +60,8 @@ export function unstakeVisrFromVisor(
   let visor = Visor.load(visorAddress);
   if (visor != null) {
     let visrStaked =
-      (rHypervisorShares.shares * rHypervisor.totalVisr) /
-      rHypervisor.totalSupply;
+      (rHyperLiquidriumShares.shares * rHyperLiquidrium.totalVisr) /
+      rHyperLiquidrium.totalSupply;
     let visrEarned = visrStaked - visor.visrDeposited;
 
     rlog.visrStaked = visrStaked.toString()

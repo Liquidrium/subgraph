@@ -1,90 +1,90 @@
 /* eslint-disable prefer-const */
 import { Address } from '@graphprotocol/graph-ts'
 import { 
-	Hypervisor as HyperVisorContract,
+	HyperLiquidrium as HyperVisorContract,
 	BonusTokenRegistered,
-	HypervisorCreated,
-	HypervisorFunded,
+	HyperLiquidriumCreated,
+	HyperLiquidriumFunded,
 	OwnershipTransferred,
 	RewardClaimed,
 	Staked,
 	Unstaked,
 	VaultFactoryRegistered,
 	VaultFactoryRemoved
-} from "../../generated/Hypervisor/Hypervisor"
-import { Hypervisor, RewardedToken } from "../../generated/schema"
+} from "../../generated/HyperLiquidrium/HyperLiquidrium"
+import { HyperLiquidrium, RewardedToken } from "../../generated/schema"
 import { getOrCreateStakedToken, createRewardedToken } from "../utils/tokens"
 import { ADDRESS_ZERO, ZERO_BI } from "../utils/constants"
 
 
-function getOrCreateStakingHypervisor(addressString: string): Hypervisor {
+function getOrCreateStakingHyperLiquidrium(addressString: string): HyperLiquidrium {
 	let nullAddress = Address.fromString(ADDRESS_ZERO)
-	let hypervisor = Hypervisor.load(addressString)
-	if (hypervisor == null) {
-		hypervisor = new Hypervisor(addressString)
-		hypervisor.powerSwitch = nullAddress
-		hypervisor.rewardPool = nullAddress
-		hypervisor.rewardPoolAmount = ZERO_BI
-		hypervisor.stakingToken = ADDRESS_ZERO
-		hypervisor.totalStakedAmount = ZERO_BI
-		hypervisor.rewardToken = ADDRESS_ZERO
+	let hyperLiquidrium = HyperLiquidrium.load(addressString)
+	if (hyperLiquidrium == null) {
+		hyperLiquidrium = new HyperLiquidrium(addressString)
+		hyperLiquidrium.powerSwitch = nullAddress
+		hyperLiquidrium.rewardPool = nullAddress
+		hyperLiquidrium.rewardPoolAmount = ZERO_BI
+		hyperLiquidrium.stakingToken = ADDRESS_ZERO
+		hyperLiquidrium.totalStakedAmount = ZERO_BI
+		hyperLiquidrium.rewardToken = ADDRESS_ZERO
 	}
 
-	return hypervisor as Hypervisor
+	return hyperLiquidrium as HyperLiquidrium
 }
 
 export function handleBonusTokenRegistered(event: BonusTokenRegistered): void {
-	let hypervisor = getOrCreateStakingHypervisor(event.address.toHex())
-	let bonusTokens = hypervisor.bonusTokens
+	let hyperLiquidrium = getOrCreateStakingHyperLiquidrium(event.address.toHex())
+	let bonusTokens = hyperLiquidrium.bonusTokens
 	if (bonusTokens != null) {
 		bonusTokens.push(event.params.token)
-		hypervisor.bonusTokens = bonusTokens
+		hyperLiquidrium.bonusTokens = bonusTokens
 	}
-	hypervisor.save()
+	hyperLiquidrium.save()
 }
 
-export function handleHypervisorCreated(event: HypervisorCreated): void {
-	// OwnershipTransferred event always emited before HypervisorCreated, so it's safe to load
-	let hypervisor = getOrCreateStakingHypervisor(event.address.toHex())
-	hypervisor.powerSwitch = event.params.powerSwitch
-	hypervisor.rewardPool = event.params.rewardPool
-	hypervisor.rewardPoolAmount = ZERO_BI
+export function handleHyperLiquidriumCreated(event: HyperLiquidriumCreated): void {
+	// OwnershipTransferred event always emited before HyperLiquidriumCreated, so it's safe to load
+	let hyperLiquidrium = getOrCreateStakingHyperLiquidrium(event.address.toHex())
+	hyperLiquidrium.powerSwitch = event.params.powerSwitch
+	hyperLiquidrium.rewardPool = event.params.rewardPool
+	hyperLiquidrium.rewardPoolAmount = ZERO_BI
 
-	let hypervisorContract = HyperVisorContract.bind(event.address)
-	let callResults = hypervisorContract.getHypervisorData()
-	hypervisor.stakingToken = callResults.stakingToken.toHexString()
-	hypervisor.totalStakedAmount = ZERO_BI
-	hypervisor.rewardToken = callResults.rewardToken.toHexString()
-	hypervisor.save()
+	let hyperLiquidriumContract = HyperVisorContract.bind(event.address)
+	let callResults = hyperLiquidriumContract.getHyperLiquidriumData()
+	hyperLiquidrium.stakingToken = callResults.stakingToken.toHexString()
+	hyperLiquidrium.totalStakedAmount = ZERO_BI
+	hyperLiquidrium.rewardToken = callResults.rewardToken.toHexString()
+	hyperLiquidrium.save()
 }
 
-export function handleHypervisorFunded(event: HypervisorFunded): void {
-	let hypervisor = getOrCreateStakingHypervisor(event.address.toHex())
-	hypervisor.rewardPoolAmount += event.params.amount
-	hypervisor.save()
+export function handleHyperLiquidriumFunded(event: HyperLiquidriumFunded): void {
+	let hyperLiquidrium = getOrCreateStakingHyperLiquidrium(event.address.toHex())
+	hyperLiquidrium.rewardPoolAmount += event.params.amount
+	hyperLiquidrium.save()
 }
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
 	let to = event.address.toHex()
-	let hypervisor = Hypervisor.load(to)
-	if (hypervisor == null) {
-		hypervisor = new Hypervisor(to)
+	let hyperLiquidrium = HyperLiquidrium.load(to)
+	if (hyperLiquidrium == null) {
+		hyperLiquidrium = new HyperLiquidrium(to)
 	}
-	hypervisor.owner = event.params.newOwner
-	hypervisor.save()
+	hyperLiquidrium.owner = event.params.newOwner
+	hyperLiquidrium.save()
 }
 
 export function handleRewardClaimed(event: RewardClaimed): void {
 	// there is both reward token and bonus token
-	let hypervisor = getOrCreateStakingHypervisor(event.address.toHex())
-	if (event.params.token.toHex() == hypervisor.rewardToken) {
-		hypervisor.rewardPoolAmount -= event.params.amount
+	let hyperLiquidrium = getOrCreateStakingHyperLiquidrium(event.address.toHex())
+	if (event.params.token.toHex() == hyperLiquidrium.rewardToken) {
+		hyperLiquidrium.rewardPoolAmount -= event.params.amount
 	}
-	hypervisor.save()
+	hyperLiquidrium.save()
 
-	let rewardedToken = RewardedToken.load(event.params.vault.toHexString() + "-" + hypervisor.rewardToken)
+	let rewardedToken = RewardedToken.load(event.params.vault.toHexString() + "-" + hyperLiquidrium.rewardToken)
 	if (rewardedToken == null) {
-		rewardedToken = createRewardedToken(event.params.vault, Address.fromString(hypervisor.rewardToken))
+		rewardedToken = createRewardedToken(event.params.vault, Address.fromString(hyperLiquidrium.rewardToken))
 	}
 	rewardedToken.amount += event.params.amount
 	rewardedToken.save()
@@ -92,33 +92,33 @@ export function handleRewardClaimed(event: RewardClaimed): void {
 
 export function handleStaked(event: Staked): void {
 	// Add data to visor instance - amount staked
-	let hypervisor = getOrCreateStakingHypervisor(event.address.toHex())
-	hypervisor.totalStakedAmount += event.params.amount
-	hypervisor.save()
+	let hyperLiquidrium = getOrCreateStakingHyperLiquidrium(event.address.toHex())
+	hyperLiquidrium.totalStakedAmount += event.params.amount
+	hyperLiquidrium.save()
 
-	let stakedToken = getOrCreateStakedToken(event.params.vault, Address.fromString(hypervisor.stakingToken))
+	let stakedToken = getOrCreateStakedToken(event.params.vault, Address.fromString(hyperLiquidrium.stakingToken))
 	stakedToken.amount += event.params.amount
 	stakedToken.save()
 }
 
 export function handleUnstaked(event: Unstaked): void {
-	let hypervisor = getOrCreateStakingHypervisor(event.address.toHex())
-	hypervisor.totalStakedAmount -= event.params.amount
-	hypervisor.save()
+	let hyperLiquidrium = getOrCreateStakingHyperLiquidrium(event.address.toHex())
+	hyperLiquidrium.totalStakedAmount -= event.params.amount
+	hyperLiquidrium.save()
 
-	let stakedToken = getOrCreateStakedToken(event.params.vault, Address.fromString(hypervisor.stakingToken))
+	let stakedToken = getOrCreateStakedToken(event.params.vault, Address.fromString(hyperLiquidrium.stakingToken))
 	stakedToken.amount -= event.params.amount
 	stakedToken.save()
 }
 
 export function handleVaultFactoryRegistered(event: VaultFactoryRegistered): void {
-	let hypervisor = getOrCreateStakingHypervisor(event.address.toHex())
-	hypervisor.vaultFactory = event.params.factory.toHex()
-	hypervisor.save()
+	let hyperLiquidrium = getOrCreateStakingHyperLiquidrium(event.address.toHex())
+	hyperLiquidrium.vaultFactory = event.params.factory.toHex()
+	hyperLiquidrium.save()
 }
 
 export function handleVaultFactoryRemoved(event: VaultFactoryRemoved): void {
-	let hypervisor = getOrCreateStakingHypervisor(event.address.toHex())
-	hypervisor.vaultFactory = null
-	hypervisor.save()
+	let hyperLiquidrium = getOrCreateStakingHyperLiquidrium(event.address.toHex())
+	hyperLiquidrium.vaultFactory = null
+	hyperLiquidrium.save()
 }

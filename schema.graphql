@@ -1,141 +1,3 @@
-type VisrToken @entity {
-  id: ID!
-  name: String!
-  decimals: Int!
-  totalSupply: BigInt!
-  totalStaked: BigInt!
-  totalDistributed: BigInt!
-  totalDistributedUSD: BigDecimal!
-}
-
-type VisrDistribution @entity {
-  id: ID!
-  timestamp: BigInt!
-  visor: Visor!
-  amount: BigInt!
-  amountUSD: BigDecimal!
-}
-
-type EthToken @entity {
-  id: ID!
-  decimals: Int!
-  totalDistributed: BigInt!
-  totalDistributedUSD: BigDecimal!
-}
-
-type EthDistribution @entity {
-  id: ID!
-  timestamp: BigInt!
-  visor: Visor!
-  amount: BigInt!
-  amountUSD: BigDecimal!
-  tx: String!
-  index: Int!
-}
-
-type RewardHypervisor @entity {
-  id: ID!
-  totalVisr: BigInt!
-  totalSupply: BigInt!
-  shares: [RewardHypervisorShare!]! @derivedFrom(field: "rewardHypervisor")
-}
-
-type RewardHypervisorShare @entity {
-  id: ID!
-  visor: Visor!
-  rewardHypervisor: RewardHypervisor!
-  shares: BigInt!
-}
-
-type VisrTokenDayData @entity {
-  id: ID!
-  date: BigInt!
-  timezone: String!
-  # Total VISR staked at the end of the day
-  totalStaked: BigInt!
-  # VISR distributed for the day
-  distributed: BigInt!
-  distributedUSD: BigDecimal!
-}
-
-type EthDayData @entity {
-  id: ID!
-  date: BigInt!
-  timezone: String!
-  distributed: BigInt!
-  distributedUSD: BigDecimal!
-}
-
-type Factory @entity {
-    id: ID!
-    owner: Bytes!
-}
-
-type Hypervisor @entity {
-  id: ID!
-  owner: Bytes!
-  stakingToken: Token!
-  totalStakedAmount: BigInt
-  rewardToken: Token!
-  rewardPool: Bytes
-  rewardPoolAmount: BigInt
-  powerSwitch: Bytes
-  bonusTokens: [Bytes!]
-  vaultFactory: Factory
-}
-
-type Visor @entity {
-    id: ID!
-    owner: User!
-    operator: User
-    tokenId: BigInt
-    visrDeposited: BigInt!
-    visrEarnedRealized: BigInt!
-    ethEarned: BigInt!
-    staked: [StakedToken!] @derivedFrom(field: "visor")
-    rewardClaimed: [RewardedToken!] @derivedFrom(field: "visor")
-    rewardHypervisorShares: [RewardHypervisorShare!]! @derivedFrom(field: "visor")
-    hypervisorCount: BigInt!
-    hypervisorShares: [UniswapV3HypervisorShare!]! @derivedFrom(field: "visor")
-    visrDistributions: [UniswapV3HypervisorShare!]! @derivedFrom(field: "visor")
-}
-
-type VisorTemplate @entity {
-  id: ID!
-  address: Bytes!
-  active: Boolean!
-}
-
-type User @entity {
-  id: ID!
-  activeVisor: Visor!
-  visorsOwned: [Visor!] @derivedFrom(field: "owner")  # Visors owned by this user
-  visorsApproved: [Visor!] @derivedFrom(field: "operator")  # Visors where this user is approved as an operator
-  operators: [OwnerOperator!] @derivedFrom(field: "operator")  # Operators this users delegates to
-  operatorFor: [OwnerOperator!] @derivedFrom(field: "owner")   # Other users that this user is an operator for
-}
-
-type OwnerOperator @entity {
-  id: ID!
-  owner: User!
-  operator: User!
-  approved: Boolean!
-}
-
-type StakedToken @entity {
-    id: ID!  # Vault address-Token address
-    token: Token!
-    visor: Visor!
-    amount: BigInt!
-}
-
-type RewardedToken @entity {
-    id: ID!  # Vault address-Token address
-    token: Token!
-    visor: Visor!
-    amount: BigInt!
-}
-
 type Token @entity {
   # token address
   id: ID!
@@ -155,30 +17,30 @@ type UniswapV3Pool @entity {
   # Fee tier: 50, 3000, 10000
   fee: Int!
   sqrtPriceX96: BigInt!
-  hypervisors: [String!]!
+  hyperLiquidriums: [String!]!
   lastSwapTime: BigInt!
 }
 
-type UniswapV3HypervisorFactory @entity {
-  # Hypervisor address
+type UniswapV3HyperLiquidriumFactory @entity {
+  # HyperLiquidrium address
   id: ID!
-  # Number of hypervisors created by factory
-  hypervisorCount: BigInt!
-  # Cumulative fees claimed by hypervisors from Uniswap
+  # Number of hyperLiquidriums created by factory
+  hyperLiquidriumCount: BigInt!
+  # Cumulative fees claimed by hyperLiquidriums from Uniswap
   grossFeesClaimedUSD: BigDecimal!
-  # Cumulative fees collected by protocol from hypervisors
+  # Cumulative fees collected by protocol from hyperLiquidriums
   protocolFeesCollectedUSD: BigDecimal!
-  # Cumulative fees reinvested into pools by hypervisors
+  # Cumulative fees reinvested into pools by hyperLiquidriums
   feesReinvestedUSD: BigDecimal!
-  # TVL of all hypervisors under one factory
+  # TVL of all hyperLiquidriums under one factory
   tvlUSD: BigDecimal!
-  hypervisors: [UniswapV3Hypervisor!]! @derivedFrom(field: "factory")
+  hyperLiquidriums: [UniswapV3HyperLiquidrium!]! @derivedFrom(field: "factory")
 }
 
-type UniswapV3Hypervisor @entity {
-  # Hypervisor address
+type UniswapV3HyperLiquidrium @entity {
+  # HyperLiquidrium address
   id: ID!
-  factory: UniswapV3HypervisorFactory!
+  factory: UniswapV3HyperLiquidriumFactory!
   owner: Bytes!
   created: Int!
   symbol: String!
@@ -213,19 +75,19 @@ type UniswapV3Hypervisor @entity {
   tvl1: BigInt!
   tvlUSD: BigDecimal!
   pricePerShare: BigDecimal!
-  conversion: UniswapV3HypervisorConversion!
-  # Number of visors deposited into hypervisor
-  visorCount: BigInt!
-  deposits: [UniswapV3Deposit!]! @derivedFrom(field: "hypervisor")
-  rebalances: [UniswapV3Rebalance!]! @derivedFrom(field: "hypervisor")
-  withdraws: [UniswapV3Withdraw!]! @derivedFrom(field: "hypervisor")
-  dayData: [UniswapV3HypervisorDayData!]! @derivedFrom(field: "hypervisor")
+  conversion: UniswapV3HyperLiquidriumConversion!
+  # Number of liquidriums deposited into hyperLiquidrium
+  # liquidriumCount: BigInt!
+  deposits: [UniswapV3Deposit!]! @derivedFrom(field: "hyperLiquidrium")
+  rebalances: [UniswapV3Rebalance!]! @derivedFrom(field: "hyperLiquidrium")
+  withdraws: [UniswapV3Withdraw!]! @derivedFrom(field: "hyperLiquidrium")
+  dayData: [UniswapV3HyperLiquidriumDayData!]! @derivedFrom(field: "hyperLiquidrium")
   lastUpdated: BigInt!
 }
 
 type UniswapV3Deposit @entity {
   id: ID!
-  hypervisor: UniswapV3Hypervisor!
+  hyperLiquidrium: UniswapV3HyperLiquidrium!
   timestamp: BigInt!
   sender: Bytes!
   to: Bytes!
@@ -237,7 +99,7 @@ type UniswapV3Deposit @entity {
 
 type UniswapV3Rebalance @entity {
   id: ID!
-  hypervisor: UniswapV3Hypervisor!
+  hyperLiquidrium: UniswapV3HyperLiquidrium!
   timestamp: BigInt!
   tick: Int!
   baseLower: Int!
@@ -261,7 +123,7 @@ type UniswapV3Rebalance @entity {
 
 type UniswapV3Withdraw @entity {
   id: ID!
-  hypervisor: UniswapV3Hypervisor!
+  hyperLiquidrium: UniswapV3HyperLiquidrium!
   timestamp: BigInt!
   sender: Bytes!
   to: Bytes!
@@ -271,10 +133,10 @@ type UniswapV3Withdraw @entity {
   amountUSD: BigDecimal!
 }
 
-type UniswapV3HypervisorDayData @entity {
+type UniswapV3HyperLiquidriumDayData @entity {
   id: ID!
   date: BigInt!
-  hypervisor: UniswapV3Hypervisor!
+  hyperLiquidrium: UniswapV3HyperLiquidrium!
   # Deposits for the day
   deposited0: BigInt!
   deposited1: BigInt!
@@ -306,20 +168,20 @@ type UniswapV3HypervisorDayData @entity {
   close: BigDecimal!
 }
 
-type UniswapV3HypervisorShare @entity {
-  id: ID!  # HypervisorAddress-VisorAddress
-  visor: Visor!
-  hypervisor: UniswapV3Hypervisor!
+type UniswapV3HyperLiquidriumShare @entity {
+  id: ID!  # HyperLiquidriumAddress-address
+  address: Bytes!
+  hyperLiquidrium: UniswapV3HyperLiquidrium!
   shares: BigInt!
   initialToken0: BigInt!
   initialToken1: BigInt!
   initialUSD: BigDecimal!
 }
 
-type UniswapV3HypervisorConversion @entity {
-  # Hypervisor ID
+type UniswapV3HyperLiquidriumConversion @entity {
+  # HyperLiquidrium ID
   id: ID!
-  hypervisor: UniswapV3Hypervisor!
+  hyperLiquidrium: UniswapV3HyperLiquidrium!
   # Whether the base token token0 or token1
   baseTokenIndex: Int!
   # The base token
@@ -330,14 +192,4 @@ type UniswapV3HypervisorConversion @entity {
   usdTokenIndex: Int!
   priceTokenInBase: BigDecimal!
   priceBaseInUSD: BigDecimal!
-}
-
-type RewardLog @entity {
-  id: ID!
-  address: String!
-  visrStaked: String!
-  visrEarned: String!
-  amount: String!
-  before: String!
-  after: String!
 }

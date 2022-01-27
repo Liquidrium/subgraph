@@ -1,52 +1,52 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts'
-import { UniswapV3Hypervisor as HypervisorContract } from "../../generated/templates/UniswapV3Hypervisor/UniswapV3Hypervisor"
+import { UniswapV3HyperLiquidrium as HyperLiquidriumContract } from "../../generated/UniswapV3HyperLiquidrium1/UniswapV3HyperLiquidrium"
 import { 
-	UniswapV3HypervisorFactory,
-	UniswapV3Hypervisor,
+	UniswapV3HyperLiquidriumFactory,
+	UniswapV3HyperLiquidrium,
 	UniswapV3Pool,
-	UniswapV3HypervisorConversion } from "../../generated/schema"
-import { getOrCreateFactory } from "../utils/uniswapV3/hypervisorFactory"
-import {getOrCreateHypervisor } from '../utils/uniswapV3/hypervisor'
+	UniswapV3HyperLiquidriumConversion } from "../../generated/schema"
+import { getOrCreateFactory } from "../utils/uniswapV3/hyperLiquidriumFactory"
+import { getOrCreateHyperLiquidrium } from '../utils/uniswapV3/hyperLiquidrium'
 import { getExchangeRate, getBaseTokenRateInUSDC } from "../utils/pricing"
 import { ZERO_BI, ZERO_BD } from './constants'
 
 
-export function resetAggregates(hypervisorAddress: string): void {
+export function resetAggregates(hyperLiquidriumAddress: string): void {
 	// Resets aggregates in factory
-	let hypervisor = getOrCreateHypervisor(Address.fromString(hypervisorAddress), BigInt.fromI32(0))
-	let factory = getOrCreateFactory(hypervisor.factory)
-	factory.grossFeesClaimedUSD -= hypervisor.grossFeesClaimedUSD
-	factory.protocolFeesCollectedUSD -= hypervisor.protocolFeesCollectedUSD
-	factory.feesReinvestedUSD -= hypervisor.feesReinvestedUSD
-	factory.tvlUSD -= hypervisor.tvlUSD
+	let hyperLiquidrium = getOrCreateHyperLiquidrium(Address.fromString(hyperLiquidriumAddress), BigInt.fromI32(0))
+	let factory = getOrCreateFactory(hyperLiquidrium.factory)
+	factory.grossFeesClaimedUSD -= hyperLiquidrium.grossFeesClaimedUSD
+	factory.protocolFeesCollectedUSD -= hyperLiquidrium.protocolFeesCollectedUSD
+	factory.feesReinvestedUSD -= hyperLiquidrium.feesReinvestedUSD
+	factory.tvlUSD -= hyperLiquidrium.tvlUSD
 	factory.save()
 }
 
-export function updateAggregates(hypervisorAddress: string): void {
-	// update aggregates in factory from hypervisor
-	let hypervisor = UniswapV3Hypervisor.load(hypervisorAddress) as UniswapV3Hypervisor
-	let factory = UniswapV3HypervisorFactory.load(hypervisor.factory) as UniswapV3HypervisorFactory
-	factory.grossFeesClaimedUSD += hypervisor.grossFeesClaimedUSD
-	factory.protocolFeesCollectedUSD += hypervisor.protocolFeesCollectedUSD
-	factory.feesReinvestedUSD += hypervisor.feesReinvestedUSD
-	factory.tvlUSD += hypervisor.tvlUSD
+export function updateAggregates(hyperLiquidriumAddress: string): void {
+	// update aggregates in factory from hyperLiquidrium
+	let hyperLiquidrium = UniswapV3HyperLiquidrium.load(hyperLiquidriumAddress) as UniswapV3HyperLiquidrium
+	let factory = UniswapV3HyperLiquidriumFactory.load(hyperLiquidrium.factory) as UniswapV3HyperLiquidriumFactory
+	factory.grossFeesClaimedUSD += hyperLiquidrium.grossFeesClaimedUSD
+	factory.protocolFeesCollectedUSD += hyperLiquidrium.protocolFeesCollectedUSD
+	factory.feesReinvestedUSD += hyperLiquidrium.feesReinvestedUSD
+	factory.tvlUSD += hyperLiquidrium.tvlUSD
 	factory.save()
 }
 	
 
-export function updateTvl(hypervisorAddress: Address): void {
-	let hypervisorId = hypervisorAddress.toHex()
-	let contract = HypervisorContract.bind(hypervisorAddress)
+export function updateTvl(hyperLiquidriumAddress: Address): void {
+	let hyperLiquidriumId = hyperLiquidriumAddress.toHex()
+	let contract = HyperLiquidriumContract.bind(hyperLiquidriumAddress)
 	let totalAmounts = contract.getTotalAmounts()
-	let hypervisor = UniswapV3Hypervisor.load(hypervisorId) as UniswapV3Hypervisor
-	let conversion = UniswapV3HypervisorConversion.load(hypervisorId) as UniswapV3HypervisorConversion
+	let hyperLiquidrium = UniswapV3HyperLiquidrium.load(hyperLiquidriumId) as UniswapV3HyperLiquidrium
+	let conversion = UniswapV3HyperLiquidriumConversion.load(hyperLiquidriumId) as UniswapV3HyperLiquidriumConversion
 	
-	hypervisor.tvl0 = totalAmounts.value0
-	hypervisor.tvl1 = totalAmounts.value1
+	hyperLiquidrium.tvl0 = totalAmounts.value0
+	hyperLiquidrium.tvl1 = totalAmounts.value1
 
-	let pool = UniswapV3Pool.load(hypervisor.pool) as UniswapV3Pool
-	let price = getExchangeRate(Address.fromString(hypervisor.pool), conversion.baseTokenIndex)
-	let baseTokenInUSDC = getBaseTokenRateInUSDC(hypervisorId)
+	let pool = UniswapV3Pool.load(hyperLiquidrium.pool) as UniswapV3Pool
+	let price = getExchangeRate(Address.fromString(hyperLiquidrium.pool), conversion.baseTokenIndex)
+	let baseTokenInUSDC = getBaseTokenRateInUSDC(hyperLiquidriumId)
 
 	conversion.priceTokenInBase = price
 	conversion.priceBaseInUSD = baseTokenInUSDC
@@ -54,25 +54,25 @@ export function updateTvl(hypervisorAddress: Address): void {
 
 	if (conversion.baseTokenIndex == 0) {
 		// If token0 is base token, then we convert token1 to the base token
-		hypervisor.tvlUSD = (hypervisor.tvl1.toBigDecimal() * price + hypervisor.tvl0.toBigDecimal()) * baseTokenInUSDC
+		hyperLiquidrium.tvlUSD = (hyperLiquidrium.tvl1.toBigDecimal() * price + hyperLiquidrium.tvl0.toBigDecimal()) * baseTokenInUSDC
 	} else if (conversion.baseTokenIndex == 1) {
 		// If token1 is base token, then we convert token0 to the base token
-		hypervisor.tvlUSD = (hypervisor.tvl0.toBigDecimal() * price + hypervisor.tvl1.toBigDecimal()) * baseTokenInUSDC
+		hyperLiquidrium.tvlUSD = (hyperLiquidrium.tvl0.toBigDecimal() * price + hyperLiquidrium.tvl1.toBigDecimal()) * baseTokenInUSDC
 	} else {
 		// If neither token is a base token, don't track USD
-		hypervisor.tvlUSD = ZERO_BD
+		hyperLiquidrium.tvlUSD = ZERO_BD
 	}
 
 	// Update pricePerShare
-	hypervisor.totalSupply = contract.totalSupply()
-	if (hypervisor.totalSupply > ZERO_BI) {
-		hypervisor.pricePerShare = hypervisor.tvlUSD / hypervisor.totalSupply.toBigDecimal()
+	hyperLiquidrium.totalSupply = contract.totalSupply()
+	if (hyperLiquidrium.totalSupply > ZERO_BI) {
+		hyperLiquidrium.pricePerShare = hyperLiquidrium.tvlUSD / hyperLiquidrium.totalSupply.toBigDecimal()
 	} else {
 		// Case where totalSupply is zero because all liquidity is withdrawn.
 		// In this case we need to reset pricePerShare to 0
-		hypervisor.pricePerShare = ZERO_BD
+		hyperLiquidrium.pricePerShare = ZERO_BD
 	}
 
-	hypervisor.lastUpdated = pool.lastSwapTime
-	hypervisor.save()
+	hyperLiquidrium.lastUpdated = pool.lastSwapTime
+	hyperLiquidrium.save()
 }

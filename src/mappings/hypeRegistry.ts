@@ -1,12 +1,12 @@
 /* eslint-disable prefer-const */
 import { HypeAdded } from "../../generated/HypeRegistry/HypeRegistry"
-import { UniswapV3Hypervisor as HypervisorTemplate } from "../../generated/templates"
-import { getOrCreateHypervisor } from "../utils/uniswapV3/hypervisor"
+import { UniswapV3HyperLiquidrium as HyperLiquidriumTemplate } from "../../generated/templates"
+import { getOrCreateHyperLiquidrium } from "../utils/uniswapV3/hyperLiquidrium"
 
 export function handleHypeAdded(event: HypeAdded): void {
 
-    let hypervisor = getOrCreateHypervisor(event.params.hype, event.block.timestamp)
-    hypervisor.save()
+    let hyperLiquidrium = getOrCreateHyperLiquidrium(event.params.hype, event.block.timestamp)
+    hyperLiquidrium.save()
     
-    HypervisorTemplate.create(event.params.hype)
+    HyperLiquidriumTemplate.create(event.params.hype)
 }

@@ -2,7 +2,7 @@
 import { Address, BigDecimal, BigInt, dataSource } from '@graphprotocol/graph-ts'
 import { isUSDC, isZero } from "./tokens"
 import { ONE_BD, ZERO_BD, constantAddresses } from "./constants"
-import { UniswapV3Pool, UniswapV3HypervisorConversion } from "../../generated/schema"
+import { UniswapV3Pool, UniswapV3HyperLiquidriumConversion } from "../../generated/schema"
 
 
 let USDC_DECIMAL_FACTOR = 10 ** 6
@@ -48,9 +48,9 @@ export function getVisrRateInUSDC(): BigDecimal{
     return rate as BigDecimal    
 }
 
-export function getBaseTokenRateInUSDC(hypervisorId: string): BigDecimal {
+export function getBaseTokenRateInUSDC(hyperLiquidriumId: string): BigDecimal {
     let rate = ZERO_BD
-    let conversion = UniswapV3HypervisorConversion.load(hypervisorId)
+    let conversion = UniswapV3HyperLiquidriumConversion.load(hyperLiquidriumId)
     if (conversion != null) {
         if (isZero(Address.fromString(conversion.baseToken))) {
             rate = ZERO_BD
