@@ -26,8 +26,18 @@ export function getExchangeRate(poolAddress: Address, baseTokenIndex: i32): BigD
 
 export function getEthRateInUSDC(): BigDecimal{
 
-    let addressLookup = constantAddresses.network(dataSource.network())
+    let network = dataSource.network()
+    let addressLookup = constantAddresses.network(network)
     let poolAddress = addressLookup.get("WETH-USDC") as string
+
+    let usdcTokenIndex = 0
+    if (dataSource.network() == "mainnet") {
+        usdcTokenIndex = 0
+    } else if (dataSource.network() == "arbitrum-one") {
+        usdcTokenIndex = 1
+    } else if (dataSource.network() == "matic") {
+        usdcTokenIndex = 0
+    }
 
     let ethInUsdcRate = getExchangeRate(Address.fromString(poolAddress), 0)
     let rate = ethInUsdcRate / BigDecimal.fromString(USDC_DECIMAL_FACTOR.toString())

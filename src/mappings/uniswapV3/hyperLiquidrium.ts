@@ -4,8 +4,8 @@ import {
 	Deposit as DepositEvent,
 	Withdraw as WithdrawEvent,
 	Rebalance as RebalanceEvent,
-	SetDepositMaxCall,
-	SetMaxTotalSupplyCall
+	TokensDepositMax as TokensDepositMaxEvent,
+	NewMaxSupply as NewMaxSupplyEvent,
 } from "../../../generated/UniswapV3HyperLiquidrium1/UniswapV3HyperLiquidrium"
 import {
 	// Visor,
@@ -207,15 +207,15 @@ export function handleWithdraw(event: WithdrawEvent): void {
     hyperLiquidriumDayData.save()
 }
 
-export function handleSetDepositMax(call: SetDepositMaxCall): void {
-	let hyperLiquidrium = getOrCreateHyperLiquidrium(call.to, call.block.timestamp)
-	hyperLiquidrium.deposit0Max = call.inputValues[0].value.toBigInt()
-	hyperLiquidrium.deposit1Max = call.inputValues[1].value.toBigInt()
+export function handleTokensDepositMax(event: TokensDepositMaxEvent): void {
+	let hyperLiquidrium = getOrCreateHyperLiquidrium(event.address, event.block.timestamp)
+	hyperLiquidrium.deposit0Max = event.params.token0Max
+	hyperLiquidrium.deposit1Max = event.params.token1Max
 	hyperLiquidrium.save()
 }
 
-export function handleSetMaxTotalSupply(call: SetMaxTotalSupplyCall): void {
-	let hyperLiquidrium = getOrCreateHyperLiquidrium(call.to, call.block.timestamp)
-	hyperLiquidrium.maxTotalSupply = call.inputValues[0].value.toBigInt()
+export function handleNewMaxSupply(event: NewMaxSupplyEvent): void {
+	let hyperLiquidrium = getOrCreateHyperLiquidrium(event.address, event.block.timestamp)
+	hyperLiquidrium.maxTotalSupply = event.params.newSupply
 	hyperLiquidrium.save()
 }

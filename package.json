@@ -16,7 +16,11 @@
     "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
     "prepare:arbitrum": "mustache config/arbitrum.json subgraph.template.yaml > subgraph.yaml",
     "prepare:v3only-mainnet": "mustache config/mainnet.json v3only.template.yaml > subgraph.yaml",
-    "deploy:mainnet": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ amolbiswas/liquidrium-subgraph",
+    "prepare:v3only-arbitrum": "mustache config/arbitrum.json v3only.template.yaml > subgraph.yaml",
+    "prepare:v3only-polygon": "mustache config/polygon.json v3only.template.yaml > subgraph.yaml",
+    "deploy:mainnet": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ liquidrium/hyperliquidrium-ethereum",
+    "deploy:arbitrum": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ liquidrium/hyperliquidrium-arbitrum",
+    "deploy:polygon": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ liquidrium/hyperliquidrium-polygon",
     "test": "graph test"
   },
   "devDependencies": {

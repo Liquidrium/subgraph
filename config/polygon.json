@@ -1,0 +1,29 @@
+{
+    "network": "matic",
+    "uniswapV3Hyperliquidrium": [
+        {
+            "name": "UniswapV3HyperLiquidrium1",
+            "pool": "WMATIC-USDC",
+            "address": "0xb19e59b77e173363fb7ce674f1279c76ee237c7a",
+            "startBlock": 23031350
+        },
+        {
+            "name": "UniswapV3HyperLiquidrium2",
+            "pool": "WMATIC-WETH",
+            "address": "0x249403e3163aaa88259e0e79a513e999ef8abec3",
+            "startBlock": 23031424
+        },
+        {
+            "name": "UniswapV3HyperLiquidrium3",
+            "pool": "USDC-USDT",
+            "address": "0x604dd071e622c9de9ded90f4f5a78a92dc9713b3",
+            "startBlock": 23914387
+        },
+        {
+            "name": "UniswapV3HyperLiquidrium4",
+            "pool": "WBTC-WETH",
+            "address": "0xda34f39a38d968a5acc8b522393006663d2cbd82",
+            "startBlock": 23919161
+        }
+    ]
+}

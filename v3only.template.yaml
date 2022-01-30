@@ -44,16 +44,15 @@ dataSources:
           handler: handleWithdraw
         - event: Rebalance(int24,uint256,uint256,uint256,uint256,uint256)
           handler: handleRebalance
-      callHandlers:
-        - function: setDepositMax(uint256,uint256)
-          handler: handleSetDepositMax
-        - function: setMaxTotalSupply(uint256)
-          handler: handleSetMaxTotalSupply
+        - event: TokensDepositMax(uint256,uint256)
+          handler: handleTokensDepositMax
+        - event: NewMaxSupply(uint256)
+          handler: handleNewMaxSupply
   {{/uniswapV3Hyperliquidrium}}
 templates:
   - name: UniswapV3Pool
     kind: ethereum/contract
-    network: mainnet
+    network: {{network}}
     source:
       abi: UniswapV3Pool
     mapping:

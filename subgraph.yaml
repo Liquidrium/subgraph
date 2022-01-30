@@ -5,11 +5,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: UniswapV3HyperLiquidrium1
-    network: mainnet
+    network: matic
     source:
-      address: "0x3fee1b1c829db1250b0e6b8605741e944ed3a41e"
+      address: "0xb19e59b77e173363fb7ce674f1279c76ee237c7a"
       abi: UniswapV3HyperLiquidrium
-      startBlock: 13777563
+      startBlock: 23031350
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -43,18 +43,17 @@ dataSources:
           handler: handleWithdraw
         - event: Rebalance(int24,uint256,uint256,uint256,uint256,uint256)
           handler: handleRebalance
-      callHandlers:
-        - function: setDepositMax(uint256,uint256)
-          handler: handleSetDepositMax
-        - function: setMaxTotalSupply(uint256)
-          handler: handleSetMaxTotalSupply
+        - event: TokensDepositMax(uint256,uint256)
+          handler: handleTokensDepositMax
+        - event: NewMaxSupply(uint256)
+          handler: handleNewMaxSupply
   - kind: ethereum/contract
     name: UniswapV3HyperLiquidrium2
-    network: mainnet
+    network: matic
     source:
-      address: "0xf82aedc7faa3fe1f412c71fe5e432690c46cd1bb"
+      address: "0x249403e3163aaa88259e0e79a513e999ef8abec3"
       abi: UniswapV3HyperLiquidrium
-      startBlock: 13777566
+      startBlock: 23031424
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -88,15 +87,102 @@ dataSources:
           handler: handleWithdraw
         - event: Rebalance(int24,uint256,uint256,uint256,uint256,uint256)
           handler: handleRebalance
-      callHandlers:
-        - function: setDepositMax(uint256,uint256)
-          handler: handleSetDepositMax
-        - function: setMaxTotalSupply(uint256)
-          handler: handleSetMaxTotalSupply
+        - event: TokensDepositMax(uint256,uint256)
+          handler: handleTokensDepositMax
+        - event: NewMaxSupply(uint256)
+          handler: handleNewMaxSupply
+  - kind: ethereum/contract
+    name: UniswapV3HyperLiquidrium3
+    network: matic
+    source:
+      address: "0x604dd071e622c9de9ded90f4f5a78a92dc9713b3"
+      abi: UniswapV3HyperLiquidrium
+      startBlock: 23914387
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/uniswapV3/hyperLiquidrium.ts
+      entities:
+        - UniswapV3HyperLiquidriumFactory
+        - UniswapV3HyperLiquidrium
+        - UniswapV3Pool
+        - Token
+        - UniswapV3Deposit
+        - UniswapV3Rebalance
+        - UniswapV3Withdraw
+        - UniswapV3HyperLiquidriumShare
+        - UniswapV3HyperLiquidriumConversion
+      abis:
+        - name: UniswapV3HyperLiquidrium
+          file: ./abis/UniswapV3HyperLiquidrium.json
+        - name: UniswapV3Pool
+          file: ./abis/UniswapV3Pool.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: ERC20NameBytes
+          file: ./abis/ERC20NameBytes.json
+        - name: ERC20SymbolBytes
+          file: ./abis/ERC20SymbolBytes.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleDeposit
+        - event: Withdraw(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleWithdraw
+        - event: Rebalance(int24,uint256,uint256,uint256,uint256,uint256)
+          handler: handleRebalance
+        - event: TokensDepositMax(uint256,uint256)
+          handler: handleTokensDepositMax
+        - event: NewMaxSupply(uint256)
+          handler: handleNewMaxSupply
+  - kind: ethereum/contract
+    name: UniswapV3HyperLiquidrium4
+    network: matic
+    source:
+      address: "0xda34f39a38d968a5acc8b522393006663d2cbd82"
+      abi: UniswapV3HyperLiquidrium
+      startBlock: 23919161
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/uniswapV3/hyperLiquidrium.ts
+      entities:
+        - UniswapV3HyperLiquidriumFactory
+        - UniswapV3HyperLiquidrium
+        - UniswapV3Pool
+        - Token
+        - UniswapV3Deposit
+        - UniswapV3Rebalance
+        - UniswapV3Withdraw
+        - UniswapV3HyperLiquidriumShare
+        - UniswapV3HyperLiquidriumConversion
+      abis:
+        - name: UniswapV3HyperLiquidrium
+          file: ./abis/UniswapV3HyperLiquidrium.json
+        - name: UniswapV3Pool
+          file: ./abis/UniswapV3Pool.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: ERC20NameBytes
+          file: ./abis/ERC20NameBytes.json
+        - name: ERC20SymbolBytes
+          file: ./abis/ERC20SymbolBytes.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleDeposit
+        - event: Withdraw(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleWithdraw
+        - event: Rebalance(int24,uint256,uint256,uint256,uint256,uint256)
+          handler: handleRebalance
+        - event: TokensDepositMax(uint256,uint256)
+          handler: handleTokensDepositMax
+        - event: NewMaxSupply(uint256)
+          handler: handleNewMaxSupply
 templates:
   - name: UniswapV3Pool
     kind: ethereum/contract
-    network: mainnet
+    network: matic
     source:
       abi: UniswapV3Pool
     mapping:
