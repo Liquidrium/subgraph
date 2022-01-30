@@ -109,7 +109,7 @@ export function createDeposit(event: DepositEvent): UniswapV3Deposit {
 export function createRebalance(event: RebalanceEvent): UniswapV3Rebalance {
   let id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
 
-  // 10% fee is hardcoded in the contracts
+  // 60% fee is hardcoded in the contracts
   let protocolFeeRate = BigInt.fromI32(60);
 
   let rebalance = new UniswapV3Rebalance(id);
@@ -120,8 +120,8 @@ export function createRebalance(event: RebalanceEvent): UniswapV3Rebalance {
   rebalance.totalAmount1 = event.params.totalAmount1;
   rebalance.grossFees0 = event.params.feeAmount0;
   rebalance.grossFees1 = event.params.feeAmount1;
-  rebalance.protocolFees0 = rebalance.grossFees0 / protocolFeeRate;
-  rebalance.protocolFees1 = rebalance.grossFees1 / protocolFeeRate;
+  rebalance.protocolFees0 = rebalance.grossFees0 * protocolFeeRate / BigInt.fromI32(100);
+  rebalance.protocolFees1 = rebalance.grossFees1 * protocolFeeRate / BigInt.fromI32(100);
   rebalance.netFees0 = rebalance.grossFees0 - rebalance.protocolFees0;
   rebalance.netFees1 = rebalance.grossFees1 - rebalance.protocolFees1;
   rebalance.totalSupply = event.params.totalSupply;
